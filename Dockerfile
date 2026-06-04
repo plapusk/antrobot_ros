@@ -27,6 +27,16 @@ RUN rosdep init 2>/dev/null || true \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /ros2_ws
+
+RUN apt-get update && apt-get install -y \
+    ros-humble-v4l2-camera \
+    ros-humble-web-video-server \
+    ros-humble-cv-bridge \
+    ros-humble-image-transport \
+    ros-humble-camera-info-manager \
+    v4l-utils \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN bash -lc 'source /opt/ros/humble/setup.bash && colcon build --symlink-install'
 
 COPY entrypoint.sh /entrypoint.sh
