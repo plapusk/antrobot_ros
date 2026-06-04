@@ -30,7 +30,7 @@ def generate_launch_description():
     kinematic_icp_launch_arg = DeclareLaunchArgument('launch_kinematic_icp', default_value='true', description='Launch kinematic_icp')
     cartographer_launch_arg = DeclareLaunchArgument('launch_cartographer', default_value='true', description='Launch cartographer')
     nav2_launch_arg = DeclareLaunchArgument('launch_nav2', default_value='true', description='Launch nav2')
-    explore_lite_launch_arg = DeclareLaunchArgument('explore_lite', default_value='false', description='Enable explore_lite with map conversion')
+    camera_launch_arg = DeclareLaunchArgument('launch_camera', default_value='false', description='Launch camera + web video server')
     
     rdrive_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -113,15 +113,12 @@ def generate_launch_description():
         launch_arguments={'namespace': LaunchConfiguration('namespace')}.items()
     )
 
-    explore_lite_launch = IncludeLaunchDescription(
+    camera_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(FindPackageShare('antrobot_ros').find('antrobot_ros'), 'launch', 'explore_lite.launch.py')
+            os.path.join(FindPackageShare('antrobot_ros').find('antrobot_ros'), 'launch', 'camera.launch.py')
         ),
-        condition=IfCondition(LaunchConfiguration('explore_lite')),
-        launch_arguments={
-            'namespace': LaunchConfiguration('namespace'),
-            'enable_explore_lite': LaunchConfiguration('explore_lite')
-        }.items()
+        condition=IfCondition(LaunchConfiguration('launch_camera')),
+        launch_arguments={'namespace': LaunchConfiguration('namespace')}.items()
     )
 
 
@@ -137,7 +134,7 @@ def generate_launch_description():
         joint_state_estimator_launch_arg,
         robot_state_launch_arg,
         nav2_launch_arg,
-        explore_lite_launch_arg,
+        camera_launch_arg,
         rdrive_launch,
         rplidar_launch,
         tf_static_link_launch,
@@ -148,5 +145,5 @@ def generate_launch_description():
         joint_state_estimator_launch,
         robot_state_launch,
         nav2_launch,
-        explore_lite_launch,
+        camera_launch,
     ])
