@@ -9,6 +9,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p src
+
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -18,7 +19,10 @@ RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . ./src/antrobot_ros
+# Copy only dep files first — changes to other source files won't bust this cache
+COPY setup_source_dependecies.sh ./src/antrobot_ros/setup_source_dependecies.sh
+COPY package.xml ./src/antrobot_ros/package.xml
+
 WORKDIR /ros2_ws/src/antrobot_ros
 RUN rosdep init 2>/dev/null || true \
  && chmod +x setup_source_dependecies.sh \
@@ -36,6 +40,9 @@ RUN apt-get update && apt-get install -y \
     ros-humble-camera-info-manager \
     v4l-utils \
     && rm -rf /var/lib/apt/lists/*
+
+# Full source copy — only invalidates the build step below
+COPY . ./src/antrobot_ros
 
 RUN bash -lc 'source /opt/ros/humble/setup.bash && colcon build --symlink-install'
 
