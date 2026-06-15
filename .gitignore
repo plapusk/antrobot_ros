@@ -41,3 +41,6 @@ venv.bak/
 *.bak
 *.tmp
 .DS_Store
+
+# Model weights (too large for git, deploy via scp/rsync)
+/models/
